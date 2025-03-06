@@ -1,1 +1,329 @@
-
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tes Buta Warna Komprehensif</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <!-- Registration Container -->
+    <div id="formContainer" class="container bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+        <h2 class="text-2xl font-bold mb-4 text-center">Tes Buta Warna Komprehensif</h2>
+        <p class="mb-6 text-center">Tes ini akan mengevaluasi tiga tipe buta warna: Deuteranopia (merah-hijau), Protanopia (merah-hijau), dan Tritanopia (biru-kuning).</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
+                <input type="text" id="username" placeholder="Nama Lengkap" required class="border p-2 rounded w-full">
+            </div>
+            <div>
+                <label for="age" class="block text-sm font-medium text-gray-700 mb-1">Usia</label>
+                <input type="text" id="age" placeholder="Usia" required class="border p-2 rounded w-full">
+            </div>
+        </div>
+        
+        <div class="mb-6">
+            <label for="gender" class="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin</label>
+            <select id="gender" class="border p-2 rounded w-full">
+                <option value="">Pilih Jenis Kelamin</option>
+                <option value="Laki-laki">Laki-laki</option>
+                <option value="Perempuan">Perempuan</option>
+                <option value="Lainnya">Lainnya</option>
+            </select>
+        </div>
+        
+        <button onclick="startTest()" class="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-700 transition">Mulai Tes</button>
+    </div>
+    
+    <!-- Test Container -->
+    <div id="testContainer" class="container bg-white p-6 rounded-lg shadow-lg hidden w-full max-w-4xl">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Left Column: Image and Test Info -->
+            <div class="flex flex-col items-center">
+                <h2 class="text-2xl font-bold mb-2">Tes Buta Warna</h2>
+                <p id="greeting" class="mb-2 text-center"></p>
+                <p id="testNumber" class="font-bold mb-1 text-center"></p>
+                <p id="testType" class="italic text-gray-600 mb-4 text-center"></p>
+                
+                <div class="w-full flex justify-center mb-4">
+                    <img id="testImage" alt="Tes Ishihara" class="rounded max-w-full max-h-64 object-contain">
+                </div>
+            </div>
+            
+            <!-- Right Column: Options -->
+            <div class="flex flex-col justify-center">
+                <p class="mb-4 font-medium">Pilih angka yang Anda lihat dalam gambar:</p>
+                <div id="buttons" class="space-y-3 mb-8"></div>
+                
+                <div class="flex justify-between mt-auto">
+                    <button id="prevButton" onclick="prevTest()" class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-700 transition disabled:opacity-50" disabled>Sebelumnya</button>
+                    <button id="nextButton" onclick="nextTest()" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-700 transition">Selanjutnya</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Results Container -->
+    <div id="resultContainer" class="container bg-white p-6 rounded-lg shadow-lg hidden w-full max-w-4xl">
+        <div id="printableContent" class="mb-6">
+            <h2 class="text-2xl font-bold mb-6 text-center">Hasil Tes Buta Warna</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div id="userInfo" class="bg-gray-50 p-4 rounded-lg"></div>
+                
+                <div class="md:col-span-2">
+                    <div id="conclusion" class="mb-6 p-4 rounded"></div>
+                </div>
+            </div>
+            
+            <div id="testResults" class="mb-6"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button onclick="printResults()" class="bg-green-500 text-white px-4 py-3 rounded hover:bg-green-700 transition flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Download PDF
+            </button>
+            <button onclick="restartTest()" class="bg-blue-500 text-white px-4 py-3 rounded hover:bg-blue-700 transition flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Mulai Ulang Tes
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // Data tes dengan gambar yang berfungsi
+        const tests = [
+            {
+                type: "Deuteranopia (Buta Warna Merah-Hijau Tipe Deutan)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Ishihara_9.png",
+                correctAnswer: 74,
+                options: [74, 21, 71, "Tidak melihat angka"],
+                explanation: "Orang dengan penglihatan normal melihat angka 74. Penderita deuteranopia mungkin melihat 21 atau tidak dapat membedakan angka."
+            },
+            {
+                type: "Protanopia (Buta Warna Merah-Hijau Tipe Protan)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/b/b8/Ishihara_11.png",
+                correctAnswer: 6,
+                options: [6, 8, 5, "Tidak melihat angka"],
+                explanation: "Orang dengan penglihatan normal melihat angka 6. Penderita protanopia mungkin melihat angka lain atau kesulitan membedakan angka."
+            },
+            {
+                type: "Tritanopia (Buta Warna Biru-Kuning)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/c/cf/Ishihara_12.png",
+                correctAnswer: 73,
+                options: [73, 23, 78, "Tidak melihat angka"],
+                explanation: "Orang dengan penglihatan normal melihat angka 73. Penderita tritanopia mungkin kesulitan melihat angka atau melihat angka yang berbeda."
+            }
+        ];
+        
+        let currentTestIndex = 0;
+        let userAnswers = [];
+        let userData = {};
+        
+        function startTest() {
+            const username = document.getElementById("username").value;
+            const age = document.getElementById("age").value;
+            const gender = document.getElementById("gender").value;
+            
+            if (username.trim() === "" || age.trim() === "" || gender === "") {
+                alert("Silakan lengkapi semua data diri Anda.");
+                return;
+            }
+            
+            userData = {
+                name: username,
+                age: age,
+                gender: gender,
+                testDate: new Date().toLocaleDateString('id-ID')
+            };
+            
+            document.getElementById("formContainer").classList.add("hidden");
+            document.getElementById("testContainer").classList.remove("hidden");
+            document.getElementById("greeting").innerText = "Halo, " + username + "! Selamat mengerjakan tes.";
+            
+            showCurrentTest();
+        }
+        
+        function showCurrentTest() {
+            const test = tests[currentTestIndex];
+            document.getElementById("testNumber").innerText = `Tes ${currentTestIndex + 1} dari ${tests.length}`;
+            document.getElementById("testType").innerText = test.type;
+            document.getElementById("testImage").src = test.image;
+            
+            // Reset button container
+            const buttonsContainer = document.getElementById("buttons");
+            buttonsContainer.innerHTML = "";
+            
+            // Add option buttons with improved visual feedback
+            test.options.forEach(option => {
+                let button = document.createElement("button");
+                button.innerText = option;
+                
+                // Use different color schemes for better visibility
+                const isSelected = userAnswers[currentTestIndex] === option;
+                
+                if (isSelected) {
+                    button.className = "bg-yellow-500 text-black font-bold px-4 py-3 rounded w-full border-2 border-black";
+                } else {
+                    button.className = "bg-gray-200 text-black px-4 py-3 rounded w-full hover:bg-gray-300 transition";
+                }
+                    
+                button.onclick = () => selectAnswer(option);
+                buttonsContainer.appendChild(button);
+            });
+            
+            // Update navigation buttons
+            document.getElementById("prevButton").disabled = currentTestIndex === 0;
+            document.getElementById("nextButton").innerText = currentTestIndex === tests.length - 1 ? "Lihat Hasil" : "Selanjutnya";
+        }
+        
+        function selectAnswer(answer) {
+            userAnswers[currentTestIndex] = answer;
+            showCurrentTest(); // Refresh to highlight selection
+        }
+        
+        function prevTest() {
+            if (currentTestIndex > 0) {
+                currentTestIndex--;
+                showCurrentTest();
+            }
+        }
+        
+        function nextTest() {
+            // Ensure an answer is selected
+            if (userAnswers[currentTestIndex] === undefined) {
+                alert("Silakan pilih jawaban terlebih dahulu.");
+                return;
+            }
+            
+            if (currentTestIndex < tests.length - 1) {
+                currentTestIndex++;
+                showCurrentTest();
+            } else {
+                showResults();
+            }
+        }
+        
+        function showResults() {
+            document.getElementById("testContainer").classList.add("hidden");
+            document.getElementById("resultContainer").classList.remove("hidden");
+            
+            // Populate user info
+            const userInfoDiv = document.getElementById("userInfo");
+            userInfoDiv.innerHTML = `
+                <h3 class="font-bold mb-2">Informasi Peserta</h3>
+                <p><strong>Nama:</strong> ${userData.name}</p>
+                <p><strong>Usia:</strong> ${userData.age}</p>
+                <p><strong>Jenis Kelamin:</strong> ${userData.gender}</p>
+                <p><strong>Tanggal Tes:</strong> ${userData.testDate}</p>
+            `;
+            
+            // Populate test results with all tests
+            const testResultsDiv = document.getElementById("testResults");
+            testResultsDiv.innerHTML = "<h3 class='font-bold text-xl mb-4'>Detail Hasil Tes</h3>";
+            
+            let resultsGrid = document.createElement("div");
+            resultsGrid.className = "grid grid-cols-1 md:grid-cols-3 gap-4";
+            
+            let normalVision = true;
+            let deutanDetected = false;
+            let protanDetected = false;
+            let tritanDetected = false;
+            
+            tests.forEach((test, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === test.correctAnswer;
+                
+                if (!isCorrect) {
+                    normalVision = false;
+                    if (index === 0) deutanDetected = true;
+                    if (index === 1) protanDetected = true;
+                    if (index === 2) tritanDetected = true;
+                }
+                
+                const resultItem = document.createElement("div");
+                resultItem.className = "border rounded-lg p-4 bg-gray-50";
+                resultItem.innerHTML = `
+                    <div class="mb-2">
+                        <img src="${test.image}" alt="Tes ${index+1}" class="w-32 h-32 object-contain mx-auto mb-2">
+                    </div>
+                    <div class="font-medium mb-1">${test.type}</div>
+                    <div class="${isCorrect ? 'text-green-600' : 'text-red-600'} mb-2">
+                        Jawaban Anda: ${userAnswer}
+                        <br>(${isCorrect ? 'Normal' : 'Berpotensi buta warna'})
+                    </div>
+                    <div class="text-sm text-gray-600">${test.explanation}</div>
+                `;
+                resultsGrid.appendChild(resultItem);
+            });
+            
+            testResultsDiv.appendChild(resultsGrid);
+            
+            // Show conclusion
+            const conclusionDiv = document.getElementById("conclusion");
+            if (normalVision) {
+                conclusionDiv.className = "mb-4 p-4 rounded bg-green-100 text-green-800";
+                conclusionDiv.innerHTML = `
+                    <h3 class="font-bold text-lg mb-2">Kesimpulan</h3>
+                    <p>Berdasarkan tes, Anda memiliki penglihatan warna normal.</p>
+                `;
+            } else {
+                conclusionDiv.className = "mb-4 p-4 rounded bg-yellow-100 text-yellow-800";
+                let conclusion = `
+                    <h3 class="font-bold text-lg mb-2">Kesimpulan</h3>
+                    <p>Berdasarkan tes, Anda mungkin memiliki:</p>
+                `;
+                
+                let detectedIssues = [];
+                
+                if (deutanDetected) detectedIssues.push("Deuteranopia (kesulitan membedakan warna merah-hijau tipe deutan)");
+                if (protanDetected) detectedIssues.push("Protanopia (kesulitan membedakan warna merah-hijau tipe protan)");
+                if (tritanDetected) detectedIssues.push("Tritanopia (kesulitan membedakan warna biru-kuning)");
+                
+                conclusion += "<ul class='list-disc pl-5 mt-2 mb-3'>";
+                detectedIssues.forEach(issue => {
+                    conclusion += `<li>${issue}</li>`;
+                });
+                conclusion += "</ul>";
+                conclusion += "<p>Disarankan untuk berkonsultasi dengan dokter mata untuk evaluasi lebih lanjut.</p>";
+                
+                conclusionDiv.innerHTML = conclusion;
+            }
+        }
+        
+        function printResults() {
+            const element = document.getElementById('printableContent');
+            
+            // Clone the original content
+            const printContent = element.cloneNode(true);
+            
+            const opt = {
+                margin: 10,
+                filename: `Hasil_Tes_Buta_Warna_${userData.name}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            
+            html2pdf().from(printContent).set(opt).save();
+        }
+        
+        function restartTest() {
+            currentTestIndex = 0;
+            userAnswers = [];
+            document.getElementById("resultContainer").classList.add("hidden");
+            document.getElementById("formContainer").classList.remove("hidden");
+            document.getElementById("username").value = "";
+            document.getElementById("age").value = "";
+            document.getElementById("gender").value = "";
+        }
+    </script>
+</body>
+</html>
